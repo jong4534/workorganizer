@@ -4,20 +4,20 @@
     <header class="border-b border-border bg-card/50 backdrop-blur-sm">
       <div class="container mx-auto px-4 py-4">
         <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-2 sm:space-x-4">
             <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
               <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
               </svg>
             </div>
-            <h1 class="text-xl font-bold text-foreground">업무 정리 도우미</h1>
+            <h1 class="text-lg sm:text-xl font-bold text-foreground">업무 정리 도우미</h1>
           </div>
           
           <!-- 사용자 프로필 드롭다운 -->
           <div class="relative" ref="profileDropdown">
             <button
               @click="toggleProfileMenu"
-              class="flex items-center space-x-3 p-2 rounded-lg hover:bg-accent transition-colors"
+              class="flex items-center space-x-2 sm:space-x-3 p-2 sm:p-2 rounded-lg hover:bg-accent transition-colors min-h-[44px] sm:min-h-0"
             >
               <img 
                 v-if="user?.photoURL" 
@@ -62,7 +62,7 @@
                     </svg>
                   </div>
                   <div class="flex-1">
-                    <p class="font-medium text-foreground">{{ user?.displayName || '데모 사용자' }}</p>
+                    <p class="font-medium text-foreground">{{ user?.displayName || '사용자' }}</p>
                     <p class="text-sm text-muted-foreground">{{ user?.email }}</p>
                   </div>
                 </div>
@@ -110,23 +110,23 @@
     </header>
 
     <!-- 메인 콘텐츠 -->
-    <main class="container mx-auto px-4 py-8">
+    <main class="container mx-auto px-4 py-6 sm:py-8">
       <!-- 상단 액션 바 -->
-      <div class="flex items-center justify-between mb-8">
-        <div>
-          <h2 class="text-2xl font-bold text-foreground">내 워크스페이스</h2>
-          <p class="text-muted-foreground">프로젝트별로 업무를 정리하고 관리하세요</p>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
+        <div class="flex-1">
+          <h2 class="text-xl sm:text-2xl font-bold text-foreground">내 워크스페이스</h2>
+          <p class="text-sm sm:text-base text-muted-foreground">프로젝트별로 업무를 정리하고 관리하세요</p>
         </div>
         
-        <div class="space-x-2">
+        <div class="flex-shrink-0">
           <button
             @click="handleCreateButtonClick"
-            class="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground font-medium rounded-md hover:bg-primary/90 transition-colors"
+            class="w-full sm:w-auto inline-flex items-center justify-center px-3 sm:px-4 py-3 sm:py-2 bg-primary text-primary-foreground font-medium rounded-md hover:bg-primary/90 transition-colors min-h-[44px] sm:min-h-0"
           >
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
-            새 워크스페이스
+            <span class="hidden sm:inline">새로 만들기</span>
           </button>
         </div>
       </div>
@@ -140,27 +140,27 @@
       </div>
 
       <!-- 워크스페이스 그리드 (로딩 완료 후) -->
-      <div v-else-if="workspaces.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-else-if="workspaces.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <div
           v-for="workspace in workspaces"
           :key="workspace.id"
-          class="group bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer"
+          class="group bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer active:scale-[0.98] sm:active:scale-100"
           @click="openWorkspace(workspace.id)"
         >
-          <div class="p-6">
+          <div class="p-4 sm:p-6">
             <!-- 워크스페이스 헤더 -->
             <div class="flex items-start justify-between mb-4">
-              <div class="flex-1">
-                <h3 class="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base sm:text-lg font-semibold text-foreground group-hover:text-primary transition-colors truncate">
                   {{ workspace.name }}
                 </h3>
-                <p v-if="workspace.description" class="text-sm text-muted-foreground mt-1">
+                <p v-if="workspace.description" class="text-sm text-muted-foreground mt-1 line-clamp-2">
                   {{ workspace.description }}
                 </p>
               </div>
               
               <!-- 공개/비공개 표시 -->
-              <div class="flex items-center space-x-2 ml-3">
+              <div class="flex items-center space-x-2 ml-3 flex-shrink-0">
                 <span 
                   :class="workspace.isPublic ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'"
                   class="px-2 py-1 text-xs rounded-full"
@@ -171,7 +171,7 @@
                 <!-- 설정 버튼 -->
                 <button
                   @click.stop="openWorkspaceSettings(workspace)"
-                  class="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground hover:text-foreground transition-all rounded"
+                  class="opacity-0 group-hover:opacity-100 p-2 sm:p-1 text-muted-foreground hover:text-foreground transition-all rounded min-w-[32px] min-h-[32px] sm:min-w-0 sm:min-h-0"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
@@ -181,7 +181,7 @@
             </div>
 
             <!-- 통계 정보 -->
-            <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="grid grid-cols-2 gap-3 sm:gap-4 mb-4">
               <div class="text-center p-3 bg-background rounded-md">
                 <div class="text-lg font-semibold text-foreground">{{ workspace.itemCount || 0 }}</div>
                 <div class="text-xs text-muted-foreground">항목</div>
@@ -194,8 +194,8 @@
 
             <!-- 최근 수정일 -->
             <div class="flex items-center justify-between text-xs text-muted-foreground">
-              <span>최근 수정: {{ formatDate(workspace.updatedAt) }}</span>
-              <span v-if="workspace.isPublic" class="flex items-center">
+              <span class="truncate">최근 수정: {{ formatDate(workspace.updatedAt) }}</span>
+              <span v-if="workspace.isPublic" class="flex items-center flex-shrink-0 ml-2">
                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
                 </svg>
@@ -217,12 +217,12 @@
         <p class="text-muted-foreground mb-6">첫 번째 워크스페이스를 만들어 업무 정리를 시작해보세요.</p>
         <button
           @click="handleCreateButtonClick"
-          class="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground font-medium rounded-md hover:bg-primary/90 transition-colors"
+          class="inline-flex items-center px-4 sm:px-6 py-3 sm:py-3 bg-primary text-primary-foreground font-medium rounded-md hover:bg-primary/90 transition-colors min-h-[44px]"
         >
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
           </svg>
-          새 워크스페이스 만들기
+          <span class="hidden sm:inline">새로 만들기</span>
         </button>
       </div>
     </main>
@@ -483,7 +483,7 @@ export default {
         // 데모 모드에서는 로그아웃만 처리
         await authService.signOut()
         router.push('/')
-        console.log('데모 계정 삭제 (실제로는 로그아웃)')
+        console.log('계정 삭제 처리')
       } catch (error) {
         console.error('계정 삭제 오류:', error)
       }
@@ -521,19 +521,14 @@ export default {
       console.log('현재 사용자:', user.value)
       console.log('인증 서비스 상태:', authService.isLoggedIn())
       
-      // 강제 데모 로그인 (사용자가 없는 경우)
+      // 로그인되지 않은 사용자는 메인 화면으로 리다이렉트
       if (!user.value) {
-        console.log('사용자가 없어서 강제 데모 로그인 실행')
-        try {
-          await authService.signInWithGoogle()
-          console.log('강제 로그인 성공')
-        } catch (error) {
-          console.error('강제 로그인 실패:', error)
-        }
+        console.log('사용자가 로그인되지 않음, 메인 화면으로 리다이렉트')
+        router.push('/')
+        return
       }
       
-      // localStorage에서 데모 워크스페이스가 자동으로 로드됩니다
-      
+      // 워크스페이스 로드
       loadWorkspaces()
       document.addEventListener('click', handleClickOutside)
     })
@@ -571,3 +566,19 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+</style>

@@ -4,95 +4,102 @@ import {
   signOut as firebaseSignOut,
   onAuthStateChanged 
 } from 'firebase/auth'
-import { auth } from '../firebase.js'
+import { auth } from '../firebase'
 
 class AuthService {
   constructor() {
     this.user = null
     this.isAuthenticated = false
-    
-    // Firebase 인증 상태 변화 감지
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // 실제 Firebase 사용자가 로그인된 상태
-        this.user = {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          photoURL: user.photoURL
+    this._initialized = false
+    this._initPromise = new Promise((resolve) => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          if (user.email === 'demo@example.com') {
+            console.log('🚫 데모 사용자 감지, 강제 로그아웃')
+            this.forceLogout()
+            this._initialized = true
+            resolve(true)
+            return
+          }
+          this.user = {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL
+          }
+          this.isAuthenticated = true
+          console.log('🔄 Firebase 인증 상태 복원:', this.user)
+        } else {
+          this.user = null
+          this.isAuthenticated = false
+          console.log('🔄 Firebase 인증 상태: 로그아웃됨')
         }
-        this.isAuthenticated = true
-        console.log('🔄 Firebase 인증 상태 복원:', this.user)
-      } else {
-        // 로그아웃된 상태
-        this.user = null
-        this.isAuthenticated = false
-        console.log('🔄 Firebase 인증 상태: 로그아웃됨')
-      }
+        this._initialized = true
+        resolve(true)
+      })
     })
   }
 
-  // 구글 로그인 (실제 Firebase 우선, 실패 시 데모 모드)
-  async signInWithGoogle() {
-    try {
-      console.log('Google 로그인 시도 시작...')
-      
-      const provider = new GoogleAuthProvider()
-      provider.addScope('email')
-      provider.addScope('profile')
-      
-      const result = await signInWithPopup(auth, provider)
-      const user = result.user
-      
-      const userData = {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL
-      }
-
-      this.user = userData
-      this.isAuthenticated = true
-      
-      console.log('✅ 실제 Google 로그인 성공:', userData)
-      return userData
-      
-    } catch (firebaseError) {
-      // Firebase 로그인 실패 시에만 데모 계정으로 대체
-      console.warn('❌ Firebase 로그인 실패, 데모 모드로 전환:', firebaseError.message)
-      console.warn('오류 코드:', firebaseError.code)
-      
-      const demoUser = {
-        uid: 'demo-user-' + Date.now(),
-        email: 'demo@example.com',
-        displayName: '데모 사용자 (실제 로그인 실패)',
-        photoURL: null
-      }
-
-      this.user = demoUser
-      this.isAuthenticated = true
-      
-      console.log('⚠️ 데모 로그인으로 대체:', demoUser)
-      return demoUser
-    }
+  async waitForInit() {
+    if (this._initialized) return true
+    return this._initPromise
   }
 
-  // 로그아웃 (실제 Firebase)
-  async signOut() {
+  async forceLogout() {
     try {
       await firebaseSignOut(auth)
-      this.user = null
-      this.isAuthenticated = false
-      console.log('로그아웃 성공')
     } catch (error) {
-      console.error('로그아웃 오류:', error)
+      console.warn('강제 로그아웃 실패:', error.message)
+    }
+    this.user = null
+    this.isAuthenticated = false
+    console.log('강제 로그아웃 완료')
+  }
+
+  async signInWithGoogle() {
+    try {
+      const provider = new GoogleAuthProvider()
+      const result = await signInWithPopup(auth, provider)
+      if (result.user.email === 'demo@example.com') {
+        console.log('🚫 데모 사용자 로그인 시도 차단')
+        await this.forceLogout()
+        throw new Error('데모 사용자는 로그인할 수 없습니다.')
+      }
+      const userData = {
+        uid: result.user.uid,
+        email: result.user.email,
+        displayName: result.user.displayName,
+        photoURL: result.user.photoURL
+      }
+      this.user = userData
+      this.isAuthenticated = true
+      console.log('✅ Google 로그인 성공:', userData)
+      return userData
+    } catch (error) {
+      console.error('❌ Google 로그인 실패:', error.message)
       throw error
     }
   }
 
-  // 인증 상태 감시 (실제 Firebase)
+  async signOut() {
+    try {
+      await firebaseSignOut(auth)
+    } catch (error) {
+      console.warn('Firebase 로그아웃 실패:', error.message)
+    }
+    this.user = null
+    this.isAuthenticated = false
+    console.log('로그아웃 완료')
+  }
+
   onAuthStateChange(callback) {
     return onAuthStateChanged(auth, (user) => {
+      if (user && user.email === 'demo@example.com') {
+        console.log('🚫 데모 사용자 감지, 강제 로그아웃')
+        this.forceLogout()
+        callback(null)
+        return
+      }
       if (user) {
         this.user = {
           uid: user.uid,
@@ -105,30 +112,21 @@ class AuthService {
         this.user = null
         this.isAuthenticated = false
       }
-      callback(user)
+      callback(this.user)
     })
   }
 
-  // 현재 사용자 정보 (Firebase 우선)
   getCurrentUser() {
-    // Firebase 인증 상태를 우선 확인
-    const firebaseUser = auth.currentUser
-    if (firebaseUser) {
-      return {
-        uid: firebaseUser.uid,
-        email: firebaseUser.email,
-        displayName: firebaseUser.displayName,
-        photoURL: firebaseUser.photoURL
-      }
-    }
-    
-    // Firebase 사용자가 없으면 내부 상태 반환
     return this.user
   }
 
-  // 로그인 상태 확인 (Firebase 우선)
   isLoggedIn() {
-    return !!auth.currentUser || this.isAuthenticated
+    const currentUser = auth.currentUser
+    if (currentUser && currentUser.email === 'demo@example.com') {
+      console.log('🚫 데모 사용자 로그인 상태 차단')
+      return false
+    }
+    return !!currentUser
   }
 }
 

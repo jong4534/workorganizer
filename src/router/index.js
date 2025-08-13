@@ -1,53 +1,42 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import authService from '../services/authService.js'
+import Landing from '../views/Landing.vue'
+import Login from '../views/Login.vue'
+import Dashboard from '../views/Dashboard.vue'
+import Workspace from '../views/Workspace.vue'
+import authService from '../services/authService'
+
+const routes = [
+  { path: '/', name: 'Landing', component: Landing, meta: { requiresGuest: true } },
+  { path: '/login', name: 'Login', component: Login, meta: { requiresGuest: true } },
+  { path: '/dashboard', name: 'Dashboard', component: Dashboard, meta: { requiresAuth: true } },
+  { path: '/workspace/:id', name: 'Workspace', component: Workspace, props: true },
+]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: [
-    {
-      path: '/',
-      name: 'landing',
-      component: () => import('../views/Landing.vue'),
-      meta: { requiresGuest: true }
-    },
-    {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: () => import('../views/Dashboard.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/workspace/:id',
-      name: 'workspace',
-      component: () => import('../views/Workspace.vue'),
-      props: true
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: () => import('../views/Login.vue'),
-      meta: { requiresGuest: true }
-    }
-  ]
+  routes
 })
 
-// 라우터 가드
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+  // Firebase 인증 초기화 대기 (새로고침 직후 보호)
+  await authService.waitForInit?.()
+
   const isAuthenticated = authService.isLoggedIn()
-  
-  // 인증이 필요한 페이지
+
+  // 워크스페이스는 공개/비공개에 따라 내부에서 처리하므로 라우터에서는 항상 통과
+  if (to.name === 'Workspace') {
+    return next()
+  }
+
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/login')
-    return
+    return next({ path: '/login', replace: true })
   }
-  
-  // 게스트만 접근 가능한 페이지 (로그인한 사용자는 대시보드로)
+
   if (to.meta.requiresGuest && isAuthenticated) {
-    next('/dashboard')
-    return
+    return next({ path: '/dashboard', replace: true })
   }
-  
-  next()
+
+  return next()
 })
 
 export default router
