@@ -18,7 +18,7 @@
         <button
           @click="handleGoogleLogin"
           :disabled="isLoading"
-          class="w-full inline-flex items-center justify-center rounded-lg text-base font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-12 px-6 py-3"
+          class="w-full inline-flex items-center justify-center rounded-lg text-base font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-6 py-3"
         >
           <svg v-if="!isLoading" class="w-5 h-5 mr-3" viewBox="0 0 24 24">
             <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -32,11 +32,9 @@
           {{ isLoading ? '로그인 중...' : 'Google로 로그인' }}
         </button>
 
-        <!-- 데모 모드 안내 -->
+        <!-- 로그인 안내 -->
         <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
-          <p class="text-sm text-blue-600">
-            <strong>데모 모드:</strong> 실제 Google 로그인 없이 데모 계정으로 체험할 수 있습니다.
-          </p>
+          <p class="text-sm text-blue-600">Google 계정으로 로그인해 시작하세요.</p>
         </div>
 
         <!-- 오류 메시지 -->
@@ -86,7 +84,7 @@ export default {
         
       } catch (error) {
         console.error('로그인 오류:', error)
-        errorMessage.value = '데모 로그인 중 오류가 발생했습니다. 다시 시도해주세요.'
+        errorMessage.value = '로그인 중 오류가 발생했습니다. 다시 시도해주세요.'
       } finally {
         isLoading.value = false
       }

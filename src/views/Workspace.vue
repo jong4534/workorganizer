@@ -3,8 +3,8 @@
     <!-- 헤더 -->
     <header class="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
       <div class="container mx-auto px-4 py-3">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <div class="flex items-center justify-between md:justify-start md:space-x-4">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+          <div class="flex items-center justify-between lg:justify-start lg:space-x-4">
             <div class="flex items-center">
               <router-link 
                 v-if="isLoggedIn()"
@@ -14,9 +14,9 @@
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
-                <span class="hidden md:inline">대시보드</span>
+                <span class="hidden lg:inline">대시보드</span>
               </router-link>
-              <div class="hidden md:block w-px h-6 bg-border mr-4"></div>
+              <div class="hidden lg:block w-px h-6 bg-border mr-4"></div>
               <!-- 공개 워크스페이스에서 메인으로 이동하는 홈 아이콘 -->
               <router-link
                 v-if="isPublicWorkspace"
@@ -25,23 +25,23 @@
                 title="메인으로"
                 aria-label="메인으로"
               >
-                <div class="w-7 h-7 md:w-8 md:h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                  <svg class="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-7 h-7 lg:w-8 lg:h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                  <svg class="w-4 h-4 lg:w-5 lg:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                   </svg>
                 </div>
               </router-link>
-              <h1 class="text-xl md:text-2xl font-bold text-foreground whitespace-nowrap break-keep">{{ workspaceName || '업무 정리 도우미' }}</h1>
+              <h1 class="text-xl lg:text-2xl font-bold text-foreground whitespace-nowrap break-keep">{{ workspaceName || '업무 정리 도우미' }}</h1>
               <!-- 공개 워크스페이스 공유 버튼 (보기 전용일 때만) -->
               <button
                 v-if="isPublicWorkspace"
                 @click="copyShareLink"
-                class="ml-2 md:ml-3 p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md"
+                class="ml-2 lg:ml-3 p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md"
                 title="링크 복사"
               >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8M8 8h8M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H9l-4 4v10a2 2 0 002 2z"/></svg>
               </button>
-              <div class="ml-2 hidden md:flex items-center space-x-2">
+              <div class="ml-2 hidden lg:flex items-center space-x-2">
                 <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span class="text-sm text-muted-foreground">AI 연결됨</span>
               </div>
@@ -49,14 +49,14 @@
           </div>
 
           <!-- 검색바 / 액션 -->
-          <div class="flex items-center gap-2 md:gap-3">
-            <div class="relative flex-1 md:flex-none">
+          <div class="flex items-center gap-2 lg:gap-3">
+            <div class="relative flex-1 lg:flex-none">
               <input
                 ref="searchInputRef"
                 v-model="searchQuery"
                 type="text"
                 placeholder="검색..."
-                class="w-full md:w-64 pr-10 md:pr-12 py-2 pl-12 bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                class="w-full lg:w-64 pr-10 lg:pr-12 py-2 pl-12 bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               >
               <div class="absolute top-1/2 -translate-y-1/2 left-3 flex items-center pointer-events-none">
                 <svg class="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,7 +106,7 @@
       </div>
 
       <!-- 실제 콘텐츠 (로딩 완료 후 표시) -->
-      <div v-else class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
+      <div v-else class="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
         
         <!-- 대기 영역 -->
         <div class="lg:col-span-1">
@@ -245,7 +245,7 @@
           </div>
 
           <!-- 카테고리 그리드 (masonry 컬럼 레이아웃) -->
-          <div class="columns-1 md:columns-2 xl:columns-3 gap-4">
+          <div class="columns-1 lg:columns-2 xl:columns-3 gap-4">
             <div
               v-for="category in filteredCategories"
               :key="category.id"
@@ -1030,8 +1030,8 @@ export default {
       )
     })
 
-    // Drawer helper
-    const isMobile = () => window.matchMedia('(max-width: 767px)').matches
+    // Drawer helper (태블릿까지 모바일 처럼 취급)
+    const isMobile = () => window.matchMedia('(max-width: 1023px)').matches
     const shouldShowPending = computed(() => pendingExpanded.value)
     const togglePending = () => {
       pendingExpanded.value = !pendingExpanded.value
@@ -1052,7 +1052,7 @@ export default {
       expandedCategoryIds.value = new Set(expandedCategoryIds.value)
     }
 
-    // 모바일 초기 상태: 대기중 닫힘
+    // 모바일/태블릿 초기 상태: 대기중 닫힘
     if (isMobile()) {
       pendingExpanded.value = false
     }
@@ -1320,6 +1320,29 @@ export default {
       isLoggedIn,
       async copyShareLink() {
         const url = window.location.href
+        const ua = navigator.userAgent || navigator.vendor || window.opera
+        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0)
+        const isSmallScreen = Math.max(window.innerWidth || 0, window.screen?.width || 0) <= 1024
+        const isMobileOrTablet = isTouch || isSmallScreen || /Android|iPhone|iPad|iPod|Mobile|Samsung|Tablet|SAMSUNG/i.test(ua)
+
+        // 모바일/태블릿: 네이티브 공유 시트 우선 제공
+        if (isMobileOrTablet && navigator.share) {
+          try {
+            const shareData = {
+              title: workspaceName.value || '업무 정리 도우미',
+              text: '워크스페이스를 공유합니다',
+              url
+            }
+            if (!navigator.canShare || navigator.canShare(shareData)) {
+              await navigator.share(shareData)
+              return
+            }
+          } catch (e) {
+            // 사용자 취소 등은 무시하고 복사 폴백 진행
+          }
+        }
+
+        // 데스크톱 또는 공유 미지원: 링크 복사 폴백
         try {
           await navigator.clipboard.writeText(url)
           alert('링크가 복사되었습니다.')
